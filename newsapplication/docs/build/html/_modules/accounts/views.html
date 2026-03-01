@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>accounts.views &mdash; newsapplication 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            newsapplication
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">accounts</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">newsapplication</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">accounts.views</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for accounts.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_user_model</span><span class="p">,</span> <span class="n">login</span><span class="p">,</span> <span class="n">logout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.forms</span><span class="w"> </span><span class="kn">import</span> <span class="n">AuthenticationForm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HttpRequest</span><span class="p">,</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_object_or_404</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">articles.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Article</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">core.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">reader_required</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">publishers.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Publisher</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.forms</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegisterForm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">assign_user_role_and_permissions</span>
+
+<span class="c1"># Get the active user model</span>
+<span class="n">User</span> <span class="o">=</span> <span class="n">get_user_model</span><span class="p">()</span>
+<span class="c1"># Create your views here.</span>
+
+
+<div class="viewcode-block" id="register">
+<a class="viewcode-back" href="../../accounts.html#accounts.views.register">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">HttpRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle user registration and optional publisher account creation.</span>
+
+<span class="sd">    Redirects authenticated users to the home page. On POST, validates the</span>
+<span class="sd">    registration form, creates a User instance, optionally</span>
+<span class="sd">    creates a Publisher</span>
+<span class="sd">    account if the role is &#39;Publisher&#39;, logs in the new user, and redirects</span>
+<span class="sd">    to the home page. On GET, displays the empty registration form.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        - The &#39;role&#39; field in POST determines whether a Publisher account</span>
+<span class="sd">          should be created.</span>
+<span class="sd">        - Uses Django&#39;s login() to authenticate the user immediately after</span>
+<span class="sd">          registration.</span>
+
+<span class="sd">    :param request: The HTTP request object containing GET or POST data</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: HttpResponse object, either a redirect to home or rendered</span>
+<span class="sd">        template</span>
+<span class="sd">    :rtype: HttpResponse</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">form</span><span class="p">:</span> <span class="n">RegisterForm</span> <span class="o">=</span> <span class="n">RegisterForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;role&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Publisher&quot;</span><span class="p">:</span>
+                <span class="n">Publisher</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">],</span> <span class="n">owner</span><span class="o">=</span><span class="n">user</span>
+                <span class="p">)</span>
+            <span class="n">assign_user_role_and_permissions</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">RegisterForm</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;auth/register.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;form&quot;</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="login_user">
+<a class="viewcode-back" href="../../accounts.html#accounts.views.login_user">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">login_user</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">HttpRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle user login and session management.</span>
+
+<span class="sd">    Redirects authenticated users to home. On POST, validates</span>
+<span class="sd">    the authentication</span>
+<span class="sd">    form, logs in the user, sets the session expiry to 1 hour,</span>
+<span class="sd">    and redirects to</span>
+<span class="sd">    home. On GET, displays the empty login form.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        - Uses Django&#39;s AuthenticationForm for validation.</span>
+<span class="sd">        - Sets session expiry with request.session.set_expiry(3600).</span>
+
+<span class="sd">    :param request: The HTTP request object containing GET or POST data</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: HttpResponse object, either a redirect to home or</span>
+<span class="sd">        rendered template</span>
+<span class="sd">    :rtype: HttpResponse</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">form</span><span class="p">:</span> <span class="n">AuthenticationForm</span> <span class="o">=</span> <span class="n">AuthenticationForm</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">set_expiry</span><span class="p">(</span><span class="mi">3600</span><span class="p">)</span>
+            <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">AuthenticationForm</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="s2">&quot;auth/login.html&quot;</span><span class="p">,</span>
+        <span class="p">{</span><span class="s2">&quot;form&quot;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">},</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="logout_user">
+<a class="viewcode-back" href="../../accounts.html#accounts.views.logout_user">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">logout_user</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">HttpRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Log out the currently authenticated user.</span>
+
+<span class="sd">    Uses Django&#39;s logout() to clear the session and redirect to</span>
+<span class="sd">    the login page.</span>
+
+<span class="sd">    :param request: The HTTP request object</span>
+<span class="sd">    :type request: HttpRequest</span>
+<span class="sd">    :return: HttpResponse object redirecting to the login page</span>
+<span class="sd">    :rtype: HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logout</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;login&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># USER PROFILE</span>
+<div class="viewcode-block" id="user_profile">
+<a class="viewcode-back" href="../../accounts.html#accounts.views.user_profile">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">user_profile</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Display a public user profile page.</span>
+
+<span class="sd">    This view retrieves a user by primary key and renders their profile.</span>
+
+<span class="sd">    Access Control:</span>
+<span class="sd">        - User must be authenticated.</span>
+
+<span class="sd">    :param request: The HTTP request object.</span>
+<span class="sd">    :type request: django.http.HttpRequest</span>
+<span class="sd">    :param pk: Primary key of the user whose profile is being viewed.</span>
+<span class="sd">    :type pk: int</span>
+<span class="sd">    :returns: Rendered profile template with user context.</span>
+<span class="sd">    :rtype: django.http.HttpResponse</span>
+<span class="sd">    :raises Http404: If no user exists with the given primary key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">user</span> <span class="o">!=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;user/profile.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">user</span><span class="p">})</span></div>
+
+
+
+<span class="c1"># JOURNALISTS</span>
+<div class="viewcode-block" id="journalists">
+<a class="viewcode-back" href="../../accounts.html#accounts.views.journalists">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">journalists</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Display a list of all users with the Journalist role.</span>
+
+<span class="sd">    Access Control:</span>
+<span class="sd">        - User must be authenticated.</span>
+
+<span class="sd">    Business Logic:</span>
+<span class="sd">        - Filters users by role=&quot;Journalist&quot;.</span>
+
+<span class="sd">    :param request: The HTTP request object.</span>
+<span class="sd">    :type request: django.http.HttpRequest</span>
+<span class="sd">    :returns: Rendered template containing all journalists.</span>
+<span class="sd">    :rtype: django.http.HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_journalists</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="s2">&quot;Journalist&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span> <span class="s2">&quot;journalists.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;journalists&quot;</span><span class="p">:</span> <span class="n">all_journalists</span><span class="p">}</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="subscribe_jounalist">
+<a class="viewcode-back" href="../../accounts.html#accounts.views.subscribe_jounalist">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="nd">@reader_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">subscribe_jounalist</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Subscribe or unsubscribe a Reader to/from a Journalist.</span>
+
+<span class="sd">    This view allows a Reader to:</span>
+<span class="sd">        - Subscribe to a journalist</span>
+<span class="sd">        - Unsubscribe from a journalist</span>
+
+<span class="sd">    Access Control:</span>
+<span class="sd">        - User must be authenticated.</span>
+<span class="sd">        - Only users with role=&quot;Reader&quot; can access and subscribe/unsubscribe.</span>
+
+<span class="sd">    Business Rules:</span>
+<span class="sd">        - Action is determined by POST parameter &quot;action&quot;.</span>
+<span class="sd">        - Valid actions: &quot;subscribe&quot;, &quot;unsubscribe&quot;.</span>
+<span class="sd">        - After processing, user is redirected to journalist list.</span>
+
+<span class="sd">    :param request: The HTTP request object.</span>
+<span class="sd">    :type request: django.http.HttpRequest</span>
+<span class="sd">    :param pk: Primary key of the journalist.</span>
+<span class="sd">    :type pk: int</span>
+<span class="sd">    :returns: Redirect response to journalists page.</span>
+<span class="sd">    :rtype: django.http.HttpResponseRedirect</span>
+<span class="sd">    :raises Http404: If the journalist does not exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The journalist being subscribed to/unsubscribed from</span>
+    <span class="n">journalist</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span> <span class="ow">and</span> <span class="n">reader</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;Reader&quot;</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;action&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;subscribe&quot;</span><span class="p">:</span>
+                <span class="n">reader</span><span class="o">.</span><span class="n">subscribed_journalists</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">journalist</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;unsubscribe&quot;</span><span class="p">:</span>
+                <span class="n">reader</span><span class="o">.</span><span class="n">subscribed_journalists</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">journalist</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error occured: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;journalists&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="journalist_profile">
+<a class="viewcode-back" href="../../accounts.html#accounts.views.journalist_profile">[docs]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">journalist_profile</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+    <span class="n">journalist</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="n">journalist_articles</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="n">journalist</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="s2">&quot;journalist_profile.html&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;journalist&quot;</span><span class="p">:</span> <span class="n">journalist</span><span class="p">,</span>
+            <span class="s2">&quot;articles&quot;</span><span class="p">:</span> <span class="n">journalist_articles</span><span class="p">,</span>
+            <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Aryn Sampson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
