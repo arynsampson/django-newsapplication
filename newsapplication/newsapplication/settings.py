@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 from decouple import config
@@ -48,17 +49,6 @@ PASSWORD_RESET_TIMEOUT = 300
 SITE_DOMAIN = "localhost:8000"
 
 # Application definition
-DATABASES = {
-    "default": {
-        "ENGINE": config("DB_ENGINE", default="django.db.backends.sqlite3"),
-        "NAME": config("DB_NAME", default=BASE_DIR / "db.sqlite3"),
-        "USER": config("DB_USER", default=""),
-        "PASSWORD": config("DB_PASSWORD", default=""),
-        "HOST": config("DB_HOST", default=""),
-        "PORT": config("DB_PORT", default=""),
-    }
-}
-
 INSTALLED_APPS = [
     "accounts",
     "articles",
@@ -108,6 +98,16 @@ WSGI_APPLICATION = "newsapplication.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("DB_NAME", "newsapplication"),
+        "USER": os.getenv("DB_USER", "newsuser"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "newspassword"),
+        "HOST": os.getenv("DB_HOST", "db"),
+        "PORT": os.getenv("DB_PORT", "3306"),
+    }
+}
 
 
 # Password validation

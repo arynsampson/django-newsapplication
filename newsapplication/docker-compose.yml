@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  db:
+    image: mariadb:11
+    container_name: newsapplication_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword        # root password, not used in Django
+      MYSQL_DATABASE: newsapplication
+      MYSQL_USER: newsuser                     # non-root user
+      MYSQL_PASSWORD: newspassword             # password for newsuser
+    volumes:
+      - db_data:/var/lib/mysql
+
+  web:
+    build: .
+    image: arynsampsonlocal/newsapplication-web:latest
+    container_name: newsapplication_web
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DB_NAME: newsapplication
+      DB_USER: newsuser
+      DB_PASSWORD: newspassword
+      DB_HOST: db
+      DB_PORT: 3306
+    depends_on:
+      - db
+
+volumes:
+  db_data:
