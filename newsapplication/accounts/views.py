@@ -34,9 +34,10 @@ def register(request: HttpRequest) -> HttpResponse:
 
     :param request: The HTTP request object containing GET or POST data
     :type request: HttpRequest
-    :return: HttpResponse object, either a redirect to home or
-    rendered template
+    :return: HttpResponse object, either a redirect to home or rendered
+        template
     :rtype: HttpResponse
+
     """
     if request.user.is_authenticated:
         return redirect("home")
@@ -77,8 +78,9 @@ def login_user(request: HttpRequest) -> HttpResponse:
     :param request: The HTTP request object containing GET or POST data
     :type request: HttpRequest
     :return: HttpResponse object, either a redirect to home or
-    rendered template
+        rendered template
     :rtype: HttpResponse
+
     """
     if request.user.is_authenticated:
         return redirect("home")

@@ -21,22 +21,23 @@ def create_article(request: HttpRequest) -> HttpResponse:
 
     - GET: displays an empty ArticleForm for the journalist to fill out.
     - POST: validates the submitted ArticleForm, assigns the current user as
-      the author, saves the article to the database, and redirects to home.
+        the author, saves the article to the database, and redirects to home.
 
     Notes:
         - Uses `login_required` to ensure the user is authenticated.
         - Uses `journalist_required` to ensure the user has
-        journalist permissions.
+            journalist permissions.
         - `form.save(commit=False)` is used to add the author before saving.
         - Redirects to 'home' after a successful submission.
         - On GET or invalid form, re-renders the form template
-        with validation errors.
+            with validation errors.
 
     :param request: The HTTP request object containing GET or POST data
     :type request: HttpRequest
     :return: HttpResponse object rendering the article creation template or
              redirecting to home
     :rtype: HttpResponse
+
     """
     if request.method == "POST":
         form: ArticleForm = ArticleForm(request.POST)
@@ -68,15 +69,16 @@ def view_article(request: HttpResponse, pk: int) -> HttpResponse:
     Notes:
         - Uses `get_object_or_404` to retrieve the article by primary key.
         - Template receives the article, associated newsletters,
-        and the current user.
+            and the current user.
 
     :param request: The HTTP request object containing GET data
     :type request: HttpRequest
     :param pk: Primary key of the article to view
     :type pk: int
     :return: HttpResponse rendering the article template or
-    redirecting to home
+        redirecting to home
     :rtype: HttpResponse
+
     """
     article = get_object_or_404(Article, pk=pk)
     user = request.user
@@ -108,16 +110,15 @@ def edit_article(request: HttpRequest, pk: int) -> HttpResponse:
     POST actions:
         - "update": Update the article content. Marks article as not approved.
         - "approve": Approve the article.
-        - "j-publish": Publish the article as a journalist
-        (only if approved).
+        - "j-publish": Publish the article as a journalist (only if approved).
         - "p-publish": Publish the article as a publisher
-        (requires publisher_id).
+            (requires publisher_id).
 
     Access control:
         - Users can only edit unpublished articles if
-        they are the author or reviewer.
+            they are the author or reviewer.
         - Users cannot edit already published articles unless
-        allowed by action.
+            allowed by action.
 
     Notes:
         - Uses `get_object_or_404` to fetch the article.
@@ -128,9 +129,10 @@ def edit_article(request: HttpRequest, pk: int) -> HttpResponse:
     :type request: HttpRequest
     :param pk: Primary key of the article to edit
     :type pk: int
-    :return: HttpResponse rendering the edit template
-    or redirecting to another page
+    :return: HttpResponse rendering the edit template or redirecting
+        to another page
     :rtype: HttpResponse
+
     """
     article = get_object_or_404(Article, pk=pk)
     user = request.user
@@ -211,10 +213,10 @@ def delete_article(request: HttpRequest, pk: int) -> HttpResponse:
 
     Notes:
         - Uses `get_object_or_404` to fetch the article;
-        raises 404 if not found.
+            raises 404 if not found.
         - Optional: Wrap `article.delete()` in try/except to catch
-          `DatabaseError` or `IntegrityError` if there is
-          a problem with deletion.
+            `DatabaseError` or `IntegrityError` if there is a problem
+                with deletion.
         - Redirects to 'home' after successful deletion.
 
     :param request: The HTTP request object
@@ -223,6 +225,7 @@ def delete_article(request: HttpRequest, pk: int) -> HttpResponse:
     :type pk: int
     :return: HttpResponse redirecting to the home page
     :rtype: HttpResponse
+
     """
     article = get_object_or_404(Article, pk=pk)
     article.delete()

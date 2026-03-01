@@ -77,9 +77,10 @@ class AccountsTests(TestCase):
         credentials.
 
         - Sends a POST request to the login view with incorrect
-        username/password.
+            username/password.
         - Asserts that the user is not authenticated.
         - Asserts that the login page is returned (status code 200).
+
         """
         login_url = reverse("login")
         data = {

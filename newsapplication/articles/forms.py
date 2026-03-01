@@ -21,7 +21,8 @@ class ArticleForm(forms.ModelForm):
     Notes:
         - The reviewer field dynamically filters users by role.
         - `required=False` allows articles to be saved without an
-        assigned reviewer.
+            assigned reviewer.
+
     """
 
     # Retrieve the active custom User model
