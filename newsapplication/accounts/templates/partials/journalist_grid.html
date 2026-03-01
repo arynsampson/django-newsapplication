@@ -1,0 +1,39 @@
+<div class="journalist-grid">
+    {% for journalist in journalists %}
+        <div class="journalist-card">
+            <h3 class="journalist-name">
+                <a href="{% url 'journalist_profile' pk=journalist.pk%}">
+                    {{ journalist.username }}
+                </a>
+            </h3>
+
+            <p class="journalist-meta">
+                <strong>Authored articles:</strong> 
+                {% if journalist.authored_articles %} 
+                    {% if journalist.published_articles %}
+                        {{ journalist.published_articles.count }}
+                    {% else %}
+                        <span>0</span>
+                    {% endif %}
+                {% endif %}
+            </p>
+
+            {% if user.role == "Reader" %}
+                <form method="post" action="{% url 'subscribe_jounalist' pk=journalist.pk %}">
+                    {% csrf_token %}
+                    {% if journalist not in request.user.subscribed_journalists.all %}
+                        <button type="submit" class="btn" name="action" value="subscribe">
+                            Subscribe
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn" name="action" value="unsubscribe">
+                            Unsubscribe
+                        </button>
+                    {% endif %}
+                </form>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No journalists available.</p>
+    {% endfor %}
+</div>

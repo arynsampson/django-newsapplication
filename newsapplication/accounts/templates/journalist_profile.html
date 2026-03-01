@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ journalist.username }}{% endblock %}
+
+{% block content %}
+<div class="journalist-profile">
+
+    <!-- Header -->
+    <div class="journalist-header">
+        <h1>{{ journalist.username }}</h1>
+    </div>
+
+    <!-- Published articles -->
+    <section class="profile-section">
+        <h2>Published Articles</h2>
+        {% include "partials/article_grid.html" with articles=articles %}
+    </section>
+
+</div>
+{% endblock %}

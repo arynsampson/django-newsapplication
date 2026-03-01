@@ -1,0 +1,84 @@
+<h3>All Articles</h3>
+<div class="article-grid">
+    {% for article in articles %}
+        {% if article.published %}
+            <div class="article-card">
+                <h3 class="article-title">
+                    <a href="{% url 'view_article' pk=article.pk%}">
+                        {{ article.title }}
+                    </a>
+                </h3>
+
+                <p class="article-meta">
+                    <strong>Written by:</strong>
+                    <a href="{% url 'journalist_profile' pk=article.author.pk %}">
+                        {{ article.author }}
+                    </a>
+                </p>
+
+                <p class="article-meta">
+                    <strong>Published by:</strong>
+                    <a href="">
+                        {% if article.publisher %} 
+                            {{ article.publisher }}
+                        {% else %}
+                            {{ article.published_by }}
+                        {% endif %}
+                    </a>
+                </p>
+                <p class="article-meta">
+                    <strong>Published on:</strong>
+                    {{ article.created_at|date:"M d, Y" }}
+                </p>
+            </div>
+
+        {% else %}
+            {% if user.role != "Journalist" or user.role != "Editor" %}
+                <div class="article-card">
+                    <h3 class="article-title">
+                        <a href="{% url 'view_article' pk=article.pk%}">
+                            {{ article.title }}
+                        </a>
+                    </h3>
+
+                    <p class="article-meta">
+                        <strong>Written by:</strong>
+                        <a href="{% url 'journalist_profile' pk=article.author.pk %}">
+                            {{ article.author }}
+                        </a>
+                    </p>
+
+                    {% if not article.approved %}
+                        <p class="article-meta">
+                            <strong>Status:</strong>
+                            <span style="color:red;">Waiting for Approval</span>
+                        </p>
+                    {% endif %}
+
+                    {% if article.approved and not article.published %}
+                        <p class="article-meta">
+                            <strong>Status:</strong>
+                            <span style="color:red;">Waiting for Publishing</span>
+                        </p>
+                    {% endif %}
+
+                    {% if article.published %}
+                        <p class="article-meta">
+                            <strong>Published by:</strong>
+                            <a href="">
+                                {{ article.published_by }}
+                            </a>
+                        </p>
+                        <p class="article-meta">
+                            <strong>Published on:</strong>
+                            {{ article.created_at|date:"M d, Y" }}
+                        </p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endif %}
+
+    {% empty %}
+        <p>No articles available.</p>
+    {% endfor %}
+</div>

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+    {% block content %}
+        {% if user.role == "Journalist" or user.role == "Editor" %}
+            <a class="btn" href="{% url 'create_newsletter' %}">+ Create Newsletter</a>
+            <p></p>
+            <hr>
+        {% endif %}
+    {% include "partials/newsletter_grid.html" with newsletters=newsletters %}
+    {% endblock %}

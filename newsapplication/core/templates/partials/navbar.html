@@ -1,0 +1,20 @@
+<nav class="navbar">
+    <div class="navbar-inner">
+
+        <div class="nav-left">
+            <a href="{% url 'home' %}" class="nav-brand">NewsApp</a>
+
+            <a href="{% url 'home' %}" class="nav-link">Articles</a>
+            <a href="{% url 'newsletters' %}" class="nav-link">Newsletters</a>
+            <a href="{% url 'journalists' %}" class="nav-link">Journalists</a>
+            <a href="{% url 'publishers' %}" class="nav-link">Publishers</a>
+        </div>
+
+        <div class="nav-right">
+            <span>{{ user }}</span>
+            <a href="{% url 'user_profile' pk=user.pk %}" class="nav-link">Profile</a>
+            <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+        </div>
+
+    </div>
+</nav>

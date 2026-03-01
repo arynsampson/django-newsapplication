@@ -1,0 +1,18 @@
+{% load static %} 
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="{% static 'core/styles.css' %}">
+		<title>News Application</title>
+	</head>
+	<body>
+		{% if user.is_authenticated %}
+			{% include "partials/navbar.html" %}
+		{% endif %}
+        <main class="page-container">
+            {% block content %}{% endblock %}
+        </main>
+	</body>
+</html>

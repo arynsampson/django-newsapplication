@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Edit Article{% endblock %}
+
+{% block content %}
+
+<div class="auth-box">
+    <form method="POST">
+        <h1 class="page-title">Edit Article</h1>
+        {% csrf_token %} 
+        {{ form.as_p }}
+	    <button type="submit" name="action" value="update" class="btn btn-full">Update Article</button>
+    <p></p>
+    {% if article.reviewer and not article.approved %}
+        {% if article.reviewer.pk == user.pk %}
+            <form action="POST">
+                {% csrf_token %}
+                {{ approve_form.as_p }}
+                <button type="submit" name="action" value="approve" class="btn btn-full" style="background:green;">Approve Article</button>
+            </form>
+        {% endif %}
+    {% endif %}
+    {% if article.approved and user.pk == article.author.pk %}
+        <form action="POST">
+            {% csrf_token %}
+            {{ approve_form.as_p }}
+            <button type="submit" name="action" value="j-publish" class="btn btn-full" style="background:green;">Publish by Journalist</button>
+            {% if user.journalist_publishers.all  %}
+            <hr>
+                <select name="publisher_id">
+                    <option value="">Select Publisher</option>
+                    {% for publisher in journalist_publishers %}
+                        <option value="{{ publisher.pk }}">
+                            {{ publisher.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" name="action" value="p-publish" class="btn btn-full" style="background:green;">Publish by Publisher</button>
+            {% endif %}
+        </form>
+    {% endif %}
+    <p></p>
+    </form>
+</div>
+{% endblock %}

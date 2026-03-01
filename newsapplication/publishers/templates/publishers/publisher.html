@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}{{ publisher.name }}{% endblock %}
+
+{% block content %}
+<div class="publisher-container">
+    <h1 class="publisher-name">{{ publisher.name }}</h1>
+
+    <p class="publisher-meta">
+        <strong>Created on:</strong> {{ publisher.created_at|date:"F d, Y" }}
+    </p>
+
+    <p class="publisher-description">{{ publisher.description }}</p>
+</div>
+{% endblock %}

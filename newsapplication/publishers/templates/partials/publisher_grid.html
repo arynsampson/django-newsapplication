@@ -1,0 +1,32 @@
+<div class="publisher-grid">
+    {% for publisher in publishers %}
+        <div class="publisher-card">
+            <h3 class="publisher-name">
+                    {{ publisher.name }}
+            </h3>
+            <p>
+                {{ publisher.description }}
+                <br>
+                {{ publisher.created_at}}
+            </p>
+             
+            {% if user.role != "Publisher" %}
+                <form method="POST" action="{% url 'subscribe_publisher' pk=publisher.pk %}">
+                    {% csrf_token %}
+
+                    {% if user not in publisher.journalists.all and user not in publisher.editors.all and user not in publisher.readers.all %}
+                        <button type="submit" class="btn" name="action" value="subscribe">Subscribe</button>
+                    {% else %}
+                        <button type="submit" class="btn" name="action" value="unsubscribe">Unsubscribe</button>
+                    {% endif %}     
+                </form>
+            {% endif %}  
+
+            {% if user == publisher.owner %}
+                <a href="{% url 'edit_publisher' pk=publisher.pk %}" class="btn btn-primary">Edit Publisher</a>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No publishers available.</p>
+    {% endfor %}
+    </div>

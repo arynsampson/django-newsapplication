@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+
+<div class="article-page-container">
+    <div class="article-two-column">
+
+        <!-- LEFT COLUMN: Article detail -->
+        <div class="article-column article-left">
+
+            <article class="article-detail">
+                <h1 class="article-detail-title">
+                    {{ article.title }}
+                </h1>
+                <hr>
+                <p></p>
+                {% if not article.published %}
+                    {% if user == article.author or user.role == "Editor" %}
+                    <a href="{% url 'edit_article' pk=article.pk %}" class="btn edit-article-btn">Edit Article</a>
+                    <p></p>
+                <hr>
+                <p></p>
+                    {% endif %}
+                {% endif %}
+                {% if user == article.author or user.role == "Editor" %}
+                        <a href="{% url 'delete_article' pk=article.pk %}" name="action" value="delete" class="btn edit-article-btn">Delete Article</a>
+                    {% endif %}
+                <p></p>
+
+                <div class="article-detail-meta">
+                    <span>
+                        <strong>Written by:</strong>
+                        <a href="{% url 'journalist_profile' pk=article.author.pk %}">
+                            {{ article.author }}
+                        </a>
+                    </span>
+
+                    <span>
+                        <strong>Published by:</strong>
+                        {% if article.published %}
+                                {% if article.publisher %}
+                                 <a href="">
+                                    {{ article.publisher }}
+                                 </a>
+                                {% else %}
+                                 <a href="{% url 'journalist_profile' pk=article.author.pk %}">
+                                    {{ article.published_by }}
+                                </a>
+                                {% endif %}
+                            
+                        {% endif %}
+                    </span>
+
+                    <span>
+                        <strong>Published on:</strong>
+                        {{ article.created_at|date:"F d, Y" }}
+                    </span>
+
+                    {% if user.role != "Reader" %}
+                        {% if not article.approved %}
+                            <span class="article-status pending">Pending approval</span>
+                        {% elif article.approved %}
+                            {% if not article.published %}
+                                <span class="article-status pending">Pending publish</span>
+                            {% else %}
+                                <span class="article-status published">Published</span>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="article-content">
+                    {{ article.content|linebreaks }}
+                </div>
+            </article>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Newsletters -->
+        <div class="article-column article-right">
+            <h2 class="side-column-title">Newsletters</h2>
+            <p>
+                This is a list of the Newsletters that this Article belongs to.
+            </p>
+
+            {% for newsletter in newsletters %}
+                <div class="newsletter-card">
+                    <h3 class="newsletter-title">
+                        <a href="{% url 'view_newsletter' pk=newsletter.pk %}">
+                            {{ newsletter.title }}
+                        </a>
+                    </h3>
+
+                    <p class="newsletter-meta">
+                        <strong>Created by:</strong>
+                        <a href="{% url 'journalist_profile' pk=newsletter.author.pk %}">
+                            {{ newsletter.author }}
+                        </a>
+                    </p>
+                </div>
+    {% empty %}
+        <p>No newsletters available.</p>
+    {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

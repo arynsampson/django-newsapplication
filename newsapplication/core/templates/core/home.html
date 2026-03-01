@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+    {% block content %}
+        {% if user.role == "Journalist" %}
+            <a class="btn" href="{% url 'create_article' %}">+ Create Article</a>
+            <p></p>
+            <hr>
+        {% endif %}
+        {% include "partials/article_grid.html" with articles=articles user=user%}
+    {% endblock %}

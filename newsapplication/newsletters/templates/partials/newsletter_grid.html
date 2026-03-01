@@ -1,0 +1,23 @@
+<div class="newsletter-grid">
+    {% for newsletter in newsletters %}
+        <div class="newsletter-card">
+            <h3 class="newsletter-title">
+                <a href="{% url 'view_newsletter' pk=newsletter.pk %}">
+                    {{ newsletter.title }}
+                </a>
+            </h3>
+
+            <p class="newsletter-meta">
+                <strong>Created by:</strong>
+                {{ newsletter.author }}
+            </p>
+
+            <p class="newsletter-meta">
+                <strong>Created on:</strong>
+                {{ newsletter.created_at|date:"M d, Y" }}
+            </p>
+        </div>
+    {% empty %}
+        <p>No newsletters available.</p>
+    {% endfor %}
+</div>

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="newsletter-layout">
+
+    <!-- LEFT COLUMN -->
+    <div class="left-column">
+
+        <!-- Row 1: Newsletter Metadata -->
+        <div class="card newsletter-meta">
+            <h2>{{ newsletter.title }}</h2>
+            <hr>
+            {% if user.pk == newsletter.author.pk %}
+                <a href="{% url 'edit_newsletter' pk=newsletter.pk %}" class="btn btn-primary">Edit newsletter</a>
+            {% endif %}
+            <hr>
+            <p class="newsletter-description">
+                <em>{{ newsletter.description }}</em>
+            </p>
+            <div class="newsletter-info">
+                <span>
+                    <a href="{% url 'journalist_profile' pk=newsletter.author.pk %}">
+                        <strong>Creator:</strong> {{ newsletter.author }}
+                    </a>
+                </span>
+                <span>
+                    <strong>Created:</strong>
+                    {{ newsletter.created_at|date:"F d, Y" }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Row 2: Articles In Newsletter -->
+         <div class="scroll-area">
+            <div class="card">
+                <h3>Articles In This Newsletter</h3>
+
+                <div class="articles-grid">
+                    {% for article in newsletter.articles.all %}
+                        <div class="article-card">
+                            <h4><a href="{% url 'view_article' pk=article.pk %}">{{ article.title }}</a></h4>
+                            <p><a href="{% url 'journalist_profile' pk=article.author.pk %}">{{ article.author }}</a></p>
+
+                            {% if user.pk == newsletter.author.pk %}
+                                <form method="post" action="{% url 'remove_article' npk=newsletter.pk apk=article.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        Remove
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% empty %}
+                        <p>No articles added yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% if user.pk == newsletter.author.pk %}
+    <!-- RIGHT COLUMN -->
+    <div class="right-column card">
+        <h3>Available Articles</h3>
+        <p>Only published Articles are available here.</p>
+        
+            <div class="scroll-area">
+                <div class="articles-grid">
+                    {% for article in available_articles %}
+                        {% if article.published %}
+                            <div class="article-card">
+                                <h4><a href="{% url 'view_article' pk=article.pk %}">{{ article.title }}</a></h4>
+                                
+                                <p><a href="{% url 'journalist_profile' pk=article.author.pk %}">{{ article.author }}</a></p>
+
+                                <form method="post" action="{% url 'add_article' npk=newsletter.pk apk=article.pk%}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">
+                                        Add
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    {% empty %}
+                        <p>No available articles.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

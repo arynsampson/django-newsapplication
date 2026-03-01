@@ -1,0 +1,115 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: #f6f7f9;
+    color: #222;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.page-container {
+    width: 80%;
+    margin: 0 auto;
+    padding-top: 3rem;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 2.5rem;
+}
+
+
+
+/* Navbar */
+.navbar {
+    background: #ffffff;
+    border-bottom: 1px solid #e3e3e3;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-left a,
+.nav-right a {
+    margin-right: 1rem;
+    font-weight: 500;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* Buttons */
+.btn {
+    background: #2563eb;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+}
+
+.btn-outline {
+    border: 1px solid #2563eb;
+    color: #2563eb;
+    background: transparent;
+}
+
+/* Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Cards */
+.card {
+    background: white;
+    border-radius: 6px;
+    padding: 1rem;
+    border: 1px solid #e3e3e3;
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+.card-meta {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+/* Forms */
+.form-container {
+    max-width: 400px;
+    margin: 3rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 6px;
+    border: 1px solid #e3e3e3;
+}
+
+.form-container input {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.form-container button {
+    width: 100%;
+}
