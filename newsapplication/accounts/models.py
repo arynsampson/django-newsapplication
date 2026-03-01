@@ -4,7 +4,15 @@ from django.db import models
 
 # Create your models here.
 class User(AbstractUser):
+    """
+    Custom user model extending Django's AbstractUser class.
 
+    This model represents a user on the system annd introduces
+    role-based access control and Journalist subscription functionality.
+    The subscription functionality involves Reader users "subscribing"
+    to Journalist users so that they can receive email notifications
+    when Journalists publish articles.
+    """
     ROLE_CHOICES = [
         ("Reader", "Reader"),
         ("Journalist", "Journalist"),
