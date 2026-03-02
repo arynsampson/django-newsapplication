@@ -4,12 +4,14 @@
 This is a Django-based news application with role-based functionality where users can create articles, newsletters, and subscribe to journalists or publishers. Articles are created by Journalists.
 Journalists and Editors can create newsletters and manage articles and newsletters, while Readers can browse articles and newsletters and subscribe to Journalists and Publishers to get email notifications about newly published articles.  
 
+The application is run using docker. 
+
 The project uses Django ORM, Django forms, built-in authentication and more.
 
 This project also contains a minimal REST API that use token based authentication with JWT to get data related to articles and newsletters, creating new stores and getting subsriber articles.
 
 
-**Technologies:** Python 3, Django, Django Templates, Django Rest Framework, MariaDB, HTML/CSS, venv
+**Technologies:** Python 3, Django, Django Templates, Django Rest Framework, MariaDB, HTML/CSS, Docker, Sphinx documentation
 
 ---
 ## Features
@@ -83,8 +85,7 @@ Uses must first get an access token and then add it in the authorization tab und
 | /api/article/:id/update | PUT | Update an existing article | Authenticated Journalist or Editor | param - article.id and response body data |
 | /api/token/ | POST | Get an access token | Public | body - {"username": "", "password": ""} |
 
-```
----
+  
 ### Email Notifications
 
 The following API actions send email notifications if EMAIL_HOST_USER is configured:  
@@ -95,3 +96,8 @@ If email configuration is missing:
 - The system logs a warning  
 - The API request still succeeds
 
+---
+
+  
+## Sphinx documentation  
+Go to docs/build/html/ and open te index.html file in the browser to access the document for the project
