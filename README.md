@@ -29,23 +29,17 @@ This project also contains a minimal REST API that use token based authenticatio
 
 ### Prerequisites
 - Python 3.10+  
-- Django
-- pip / virtualenv  
+- Django 
 - MariaDB installed and setup
+- Docker installed and setup
 
 ### Steps
 1. Clone the repository:
-git clone
+git clone https://github.com/arynsampson/django-newsapplication
 
-2. Create a virtual environment and activate it
-python -m venv venv
-Windows: venv\Scripts\activate
-macOS/Linux: source venv/bin/activate
+2. cd into django-newsapplication directory
 
-3. Install dependencies
-pip install -r requirements.txt
-
-4. Create a .env file in the root directory (See .env.example): 
+3. Create a .env file in the project root directory (See .env.example): 
 ``` 
     SECRET_KEY=secret_key  
     DB_ENGINE=db_engine  
@@ -59,27 +53,17 @@ pip install -r requirements.txt
     DEFAULT_FROM_EMAIL=your_gmail_app_email_address (USED FOR EMAIL SENDING FROM SIGNAL)
 ```
 
-(Ensure MariaDB is functional as mentioned in prerequisites)  
-5. Make and apply migrations  
-python manage.py makemigrations  
-python manage.py migrate  
+4. Run docker-compose up --build  
 
-7. Collect static files  
-python manage.py collectstatic
-
-8. Create a superuser (optional, for admin panel):  
-python manage.py createsuperuser  
-Follow prompts  
-
-9. Run the development server:  
-python manage.py runserver
-
-10. Go to http://127.0.0.1:8000/ in your browser
+5. Go to http://127.0.0.1:8000/ in your browser
 
 ---
 
 ## Tests
-Tests can be run with:  
+To run the tests from inside the container, go to the project root:  
+1. Run docker ps and get the name of the container for the project
+2. Run docker exec -it <container_name> bash
+3. Tests can be run with:  
 python manage.py test  
 or  
 python manage.py test <app_name> (individual app tests)
