@@ -43,14 +43,14 @@ git clone https://github.com/arynsampson/django-newsapplication
 
 3. Create a .env file in the project root directory (See .env.example): 
 ``` 
-    SECRET_KEY=secret_key  
-    DB_ENGINE=db_engine  
+    SECRET_KEY=secret_key  (generate a key using the django shell)
+    DB_ENGINE=db_engine  (django.db.backends.mysql)
     DB_NAME=dbname  
     DB_USER=user  
     DB_PASSWORD=password  
-    DB_HOST=host  
-    DB_PORT=port  
-    EMAIL_HOST_USER=gmail_address (REQUIRED FOR EMAIL NOTIFICATIONS)  
+    DB_HOST=host  (localhost)
+    DB_PORT=port  (3306)
+    EMAIL_HOST_USER=gmail_app_address (Create a GMAIL APP (mail application for GMAIL) - REQUIRED FOR EMAIL NOTIFICATIONS)  
     EMAIL_HOST_PASSWORD=gmail_app_password  
     DEFAULT_FROM_EMAIL=your_gmail_app_email_address (USED FOR EMAIL SENDING FROM SIGNAL)
 ```
